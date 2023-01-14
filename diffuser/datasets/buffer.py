@@ -5,6 +5,11 @@ def atleast_2d(x):
         x = np.expand_dims(x, axis=-1)
     return x
 
+def flatten_observations(x):
+    """Flattens (7,7,3) observations to (147)."""
+    x = x.flatten()
+    return atleast_2d(x)
+
 class ReplayBuffer:
 
     def __init__(self, max_n_episodes, max_path_length, termination_penalty):
@@ -57,11 +62,7 @@ class ReplayBuffer:
     def _allocate(self, key, array):
         assert key not in self._dict
         dim = array.shape[-1]
-        if key == 'observations':
-            shape = (self.max_n_episodes, self.max_path_length,
-                        array.shape[-3], array.shape[-2], dim)
-        else:
-            shape = (self.max_n_episodes, self.max_path_length, dim)
+        shape = (self.max_n_episodes, self.max_path_length, dim)
         self._dict[key] = np.zeros(shape, dtype=np.float32)
         # print(f'[ utils/mujoco ] Allocated {key} with size {shape}')
 
@@ -75,6 +76,8 @@ class ReplayBuffer:
         ## add tracked keys in path
         for key in self.keys:
             array = atleast_2d(path[key])
+            if key == 'observations':
+                array = flatten_observations(array)
             if key not in self._dict: self._allocate(key, array)
             self._dict[key][self._count, :path_length] = array
 
