@@ -6,9 +6,9 @@ def atleast_2d(x):
     return x
 
 def flatten_observations(x):
-    """Flattens (7,7,3) observations to (147)."""
-    x = x.flatten()
-    return atleast_2d(x)
+    """Flattens (path_length,7,7,3) observations to (path_length, 147)."""
+    x = x.reshape(x.shape[0], -1)
+    return x
 
 class ReplayBuffer:
 
