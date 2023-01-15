@@ -143,10 +143,9 @@ class GaussianNormalizer(Normalizer):
         )
 
     def normalize(self, x):
-        if self.stds == 0:
-            return (x - self.means)
-        else:
-            return (x - self.means) / self.stds
+        stds = self.stds
+        stds[stds == 0] = 1
+        return (x - self.means) / self.stds
 
     def unnormalize(self, x):
         return x * self.stds + self.means
