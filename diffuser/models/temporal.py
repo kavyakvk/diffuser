@@ -161,7 +161,7 @@ class TemporalLSTMMemoryUnet(nn.Module):
         action_grounding_loss=False,
     ):
         super().__init__()
-        
+
         dims = [transition_dim, *map(lambda m: dim * m, dim_mults)]
         in_out = list(zip(dims[:-1], dims[1:]))
         print(f'[ models/temporal ] Channel dimensions: {in_out}')
@@ -230,7 +230,7 @@ class TemporalLSTMMemoryUnet(nn.Module):
     def forward(self, x, cond, time):
         '''
             x : [ batch x horizon x transition ]
-            cond : [ batch x cond_dim ]
+            cond : {t : [ batch x cond_dim ] }
         '''
 
         x = einops.rearrange(x, 'b h t -> b t h')
@@ -243,7 +243,7 @@ class TemporalLSTMMemoryUnet(nn.Module):
         memory = torch.concat((
             self.lstm_state[0].squeeze(dim=0),
             self.lstm_state[1].squeeze(dim=0)), axis=-1)
-        t = torch.concat((torch.unsqueeze(t, axis=-1), memory), axis=-1)
+        t = torch.concat((t, memory), axis=-1)
 
         h = []
 
