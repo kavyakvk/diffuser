@@ -141,7 +141,13 @@ def cosine_beta_schedule(timesteps, s=0.008, dtype=torch.float32):
 
 def apply_conditioning(x, conditions, action_dim):
     for t, val in conditions.items():
-        x[:, t, action_dim:] = val.clone()
+        if isinstance(val, dict):
+            if val.get('action'):
+                x[:, t, :action_dim] = val['action'].clone()
+            if val.get('obs'):
+                x[:, t, action_dim:] = val['obs'].clone()
+        else:
+            x[:, t, action_dim:] = val.clone()
     return x
 
 
