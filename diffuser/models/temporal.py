@@ -159,6 +159,7 @@ class TemporalLSTMMemoryUnet(nn.Module):
         attention=False,
         lstm_hidden_size=32,
         action_grounding_loss=False,
+        device='cpu',
     ):
         super().__init__()
 
@@ -221,8 +222,8 @@ class TemporalLSTMMemoryUnet(nn.Module):
             num_layers=1,
             batch_first=True)
         self.lstm_state = (
-            torch.randn(1, batch_size, lstm_hidden_size, requires_grad=True),
-            torch.randn(1, batch_size, lstm_hidden_size, requires_grad=True))
+            torch.randn(1, batch_size, lstm_hidden_size, requires_grad=True, device=device),
+            torch.randn(1, batch_size, lstm_hidden_size, requires_grad=True, device=device))
         
         self.action_grounding_loss = action_grounding_loss
 
