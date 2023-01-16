@@ -82,8 +82,13 @@ class SequenceDataset(torch.utils.data.Dataset):
     def __getitem__(self, idx, eps=1e-4):
         path_ind, start, end = self.indices[idx]
 
-        observations = self.fields.normed_observations[path_ind, start:end]
+        normed_observations = self.fields.normed_observations[path_ind, start:end]
+        orientation = self.fields['infos/orientation'][path_ind, start:end]
         actions = self.fields.normed_actions[path_ind, start:end]
+
+        # Observation must include orientation information
+        observations = np.concatenate(
+            [orientation, normed_observations], axis=-1)
 
         conditions = self.get_conditions(observations)
         trajectories = np.concatenate([actions, observations], axis=-1)
