@@ -239,7 +239,7 @@ class TemporalLSTMMemoryUnet(nn.Module):
         t = self.time_mlp(time)
 
         obs = cond[0]
-        lstm_state_detached = (s.detach() for s in self.lstm_state)
+        lstm_state_detached = tuple(s.detach() for s in self.lstm_state)
         out, self.lstm_state = self.lstm(obs.unsqueeze(-1), lstm_state_detached)
         # TODO(kavyakvk): use out for a action grounding loss with the previous action 
         memory = torch.concat((
